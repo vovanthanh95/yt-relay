@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- QUAN TRỌNG: gửi referer hợp lệ để tránh YouTube Error 153 -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>YouTube Relay</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+  iframe { border: 0; width: 100%; height: 100%; display: block; }
+  .msg { color: #aaa; font-family: sans-serif; font-size: 13px; padding: 16px; }
+</style>
+</head>
+<body>
+<script>
+  var q = new URLSearchParams(location.search);
+  var v = q.get("v");
+  var list = q.get("list");
+  var start = q.get("start");
+  var autoplay = q.get("autoplay") === "0" ? "0" : "1";
+
+  var params = new URLSearchParams({ autoplay: autoplay, rel: "0", modestbranding: "1" });
+  if (start) params.set("start", start);
+
+  var src = null;
+  if (v) {
+    src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(v) + "?" + params.toString();
+    if (list) src += "&list=" + encodeURIComponent(list);
+  } else if (list) {
+    src = "https://www.youtube-nocookie.com/embed/videoseries?" + params.toString() + "&list=" + encodeURIComponent(list);
+  }
+
+  if (src) {
+    var f = document.createElement("iframe");
+    f.src = src;
+    f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    f.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture; fullscreen");
+    f.setAttribute("allowfullscreen", "");
+    document.body.appendChild(f);
+  } else {
+    document.body.innerHTML = '<div class="msg">Thiếu tham số ?v=VIDEO_ID</div>';
+  }
+</script>
+</body>
+</html>
